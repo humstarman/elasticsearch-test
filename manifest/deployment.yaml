@@ -1,0 +1,32 @@
+kind: Deployment 
+apiVersion: extensions/v1beta1
+metadata:
+  name: elasticsearch 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: 192.168.100.166:5000/elasticsearch:v2
+          volumeMounts:  
+            - name: host-time
+              mountPath: /etc/localtime
+              readOnly: true
+        - name: curl 
+          image: lowyard/busybox-curl:latest 
+          command:
+            - /bin/sh
+            - -c
+            - "while true; do sleep 60; done"
+          volumeMounts:  
+            - name: host-time
+              mountPath: /etc/localtime
+              readOnly: true
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
